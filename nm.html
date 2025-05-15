@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Detecting Market Trends - Financial & Economic Analysis</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 600px;
+    max-height: 600px;
+    width: 100vw;
+    max-width: 350px;
+    overflow: hidden;
+    padding: 10px 0;
+  }
+  #app {
+    background: #0b1e3d;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    border-radius: 15px;
+    width: 340px;
+    height: 580px;
+    overflow-y: auto;
+    padding: 15px 20px;
+  }
+  h1, h2, h3 {
+    font-weight: 700;
+    color: #89c9f9;
+    margin: 10px 0 8px;
+  }
+  h1 {
+    font-size: 1.7rem;
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+  p {
+    line-height: 1.4;
+    font-size: 0.9rem;
+    margin: 0 0 12px 0;
+    color: #d9e6f8;
+  }
+  nav {
+    margin: 10px 0 20px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  nav button {
+    background: #2a5298;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 25px;
+    color: #c4d9ff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  nav button:hover, nav button.active {
+    background: #89c9f9;
+    color: #0b1e3d;
+    font-weight: 700;
+  }
+  section {
+    margin-bottom: 15px;
+  }
+  .section-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  section.expanded .section-content {
+    max-height: 1800px;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: #89c9f9;
+    font-weight: 600;
+    user-select: none;
+  }
+  .section-header:hover {
+    color: #d1e8ff;
+  }
+  .toggle-icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+  section.expanded .toggle-icon {
+    transform: rotate(90deg);
+  }
+  code {
+    background: #214270;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: "Courier New", Courier, monospace;
+  }
+  ul {
+    margin: 6px 0 12px 18px;
+  }
+  li {
+    margin-bottom: 6px;
+  }
+  #app::-webkit-scrollbar {
+    width: 6px;
+  }
+  #app::-webkit-scrollbar-track {
+    background: #0b1e3d;
+  }
+  #app::-webkit-scrollbar-thumb {
+    background: #274a83;
+    border-radius: 10px;
+  }
+  .chart-container {
+    position: relative;
+    height: 200px;
+    margin-top: 10px;
+    border-radius: 12px;
+    background: #142a59;
+    padding: 10px;
+  }
+  @media (max-width: 350px) {
+    #app {
+      width: 100vw;
+    }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div id="app" role="main" aria-label="Detecting Market Trends Explanation and Guide">
+  <h1>📈 Detecting Market Trends</h1>
+  <p>Explore detailed techniques and visualizations to analyze financial reports, economic indicators, and combined statistical methods for market trend detection.</p>
+  <nav aria-label="Section navigation">
+    <button class="nav-btn active" data-target="financial-reports" aria-selected="true">Financial Reports</button>
+    <button class="nav-btn" data-target="economic-indicators">Economic Indicators</button>
+    <button class="nav-btn" data-target="combined-analysis">Combined Analysis</button>
+  </nav>
+
+  <!-- Financial Reports Section with Graphs -->
+  <section id="financial-reports" class="expanded" tabindex="0" aria-expanded="true" aria-label="Financial reports section">
+    <div class="section-header" tabindex="0" role="button" aria-controls="financial-reports-content" aria-expanded="true">
+      <span>📊 Financial Reports & Graphs</span>
+      <span class="toggle-icon" aria-hidden="true">▶</span>
+    </div>
+    <div id="financial-reports-content" class="section-content" aria-live="polite">
+      <p>Financial reports include revenue, profits, EPS, and cash flow data. Analyzing these helps evaluate company strength and market position.</p>
+      <h3>Revenue Growth Over a Year</h3>
+      <p>This line chart shows monthly revenue (in millions USD) growth trend for a sample company.</p>
+      <div class="chart-container">
+        <canvas id="revenueChart" width="300" height="180" aria-label="Line chart of revenue growth" role="img"></canvas>
+      </div>
+
+      <h3>Profit Margin Analysis</h3>
+      <p>Bar chart displaying quarterly profit margins (%) over one year.</p>
+      <div class="chart-container">
+        <canvas id="profitMarginChart" width="300" height="180" aria-label="Bar chart of profit margins" role="img"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Economic Indicators Section with Graphs -->
+  <section id="economic-indicators" tabindex="0" aria-expanded="false" aria-label="Economic indicators section">
+    <div class="section-header" tabindex="0" role="button" aria-controls="economic-indicators-content" aria-expanded="false">
+      <span>🌍 Economic Indicators & Graphs</span>
+      <span class="toggle-icon" aria-hidden="true">▶</span>
+    </div>
+    <div id="economic-indicators-content" class="section-content" aria-live="polite">
+      <p>Key economic indicators such as GDP, unemployment rate, and inflation provide macroeconomic insights important for trend analysis.</p>
+      <h3>GDP Growth Rate (Quarterly)</h3>
+      <p>Polar area chart illustrating GDP growth percentages by quarter.</p>
+      <div class="chart-container">
+        <canvas id="gdpChart" width="300" height="180" aria-label="Polar area chart of GDP growth rate" role="img"></canvas>
+      </div>
+
+      <h3>Unemployment Rate (Monthly)</h3>
+      <p>Bar chart of unemployment rate (%) over recent months to reflect labor market health.</p>
+      <div class="chart-container">
+        <canvas id="unemploymentChart" width="300" height="180" aria-label="Bar chart of unemployment rate" role="img"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Combined Analysis Section with Graphs and Details -->
+  <section id="combined-analysis" tabindex="0" aria-expanded="false" aria-label="Combined analysis section">
+    <div class="section-header" tabindex="0" role="button" aria-controls="combined-analysis-content" aria-expanded="false">
+      <span>🔍 Combined Statistical & Sentiment Analysis</span>
+      <span class="toggle-icon" aria-hidden="true">▶</span>
+    </div>
+    <div id="combined-analysis-content" class="section-content" aria-live="polite">
+      <p>This advanced section explains combining financial, economic, and sentiment data with statistical models for improved market trend detection.</p>
+      <h3>LSTM Prediction Accuracy (Sample)</h3>
+      <p>Line chart showing predicted vs actual stock price data using hybrid models.</p>
+      <div class="chart-container">
+        <canvas id="lstmPredictionChart" width="300" height="180" aria-label="Line chart of LSTM model prediction accuracy" role="img"></canvas>
+      </div>
+      <h3>Market Sentiment Score (Weekly)</h3>
+      <p>Area chart reflecting aggregated market sentiment scores over weeks derived from news and social media analysis.</p>
+      <div class="chart-container">
+        <canvas id="sentimentChart" width="300" height="180" aria-label="Area chart of market sentiment score" role="img"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <footer style="font-size: 0.75rem; text-align:center; margin-top: 10px; color:#7aa5d9;">
+    &copy; 2024 Market Trends Analysis Guide
+  </footer>
+</div>
+
+<script>
+  // Manage section toggle
+  document.querySelectorAll('section .section-header').forEach(header => {
+    header.addEventListener('click', () => toggleSection(header.parentElement));
+    header.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        toggleSection(header.parentElement);
+      }
+    });
+  });
+
+  function toggleSection(section){
+    const expanded = section.classList.contains('expanded');
+    if(expanded){
+      section.classList.remove('expanded');
+      section.setAttribute('aria-expanded', 'false');
+      section.querySelector('.section-header').setAttribute('aria-expanded', 'false');
+    } else {
+      section.classList.add('expanded');
+      section.setAttribute('aria-expanded', 'true');
+      section.querySelector('.section-header').setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  // Navigation buttons
+  const navButtons = document.querySelectorAll('nav button.nav-btn');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+
+      const targetId = btn.dataset.target;
+      document.querySelectorAll('#app section').forEach(sec => {
+        if(sec.id === targetId){
+          sec.classList.add('expanded');
+          sec.setAttribute('aria-expanded', 'true');
+          sec.querySelector('.section-header').setAttribute('aria-expanded', 'true');
+          sec.scrollIntoView({behavior: 'smooth', block: 'start'});
+        } else {
+          sec.classList.remove('expanded');
+          sec.setAttribute('aria-expanded', 'false');
+          sec.querySelector('.section-header').setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  });
+
+  // Charts rendering
+  function renderCharts(){
+    // Revenue Line Chart
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    const gradRevenue = ctxRevenue.createLinearGradient(0,0,0,200);
+    gradRevenue.addColorStop(0, 'rgba(137,201,249,0.6)');
+    gradRevenue.addColorStop(1, 'rgba(137,201,249,0)');
+    new Chart(ctxRevenue, {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+          label: 'Revenue (M USD)',
+          data: [10,12,15,14,18,20,23,25,28,30,32,35],
+          fill: true,
+          backgroundColor: gradRevenue,
+          borderColor: '#89c9f9',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#0b1e3d',
+          pointBorderColor: '#89c9f9',
+          tension: 0.3,
+          hoverRadius: 6
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          y: { beginAtZero:true, ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'} },
+          x: { ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'} }
+        },
+        plugins: {
+          legend: {labels:{color:'#89c9f9', font:{size:12}}},
+          tooltip: {backgroundColor:'#274a83',titleColor:'#89c9f9',bodyColor:'#d9e6f8'}
+        },
+        interaction: {mode:'nearest', intersect:false}
+      }
+    });
+
+    // Profit Margin Bar Chart
+    const ctxProfit = document.getElementById('profitMarginChart').getContext('2d');
+    new Chart(ctxProfit, {
+      type: 'bar',
+      data: {
+        labels: ['Q1','Q2','Q3','Q4'],
+        datasets:[{
+          label: 'Profit Margin (%)',
+          data: [20, 22, 19, 23],
+          backgroundColor: 'rgba(137,201,249,0.7)',
+          borderColor: '#89c9f9',
+          borderWidth: 1,
+          hoverBackgroundColor: '#89c9f9'
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          y: { beginAtZero:true, max:30, ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'} },
+          x: { ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'} }
+        },
+        plugins: {
+          legend: {labels:{color:'#89c9f9', font:{size:12}}},
+          tooltip: {backgroundColor:'#274a83',titleColor:'#89c9f9',bodyColor:'#d9e6f8'}
+        }
+      }
+    });
+
+    // GDP Growth Polar Area Chart
+    const ctxGDP = document.getElementById('gdpChart').getContext('2d');
+    new Chart(ctxGDP, {
+      type: 'polarArea',
+      data: {
+        labels: ['Q1','Q2','Q3','Q4'],
+        datasets: [{
+          label: 'GDP Growth Rate (%)',
+          data: [2.4,3.1,2.8,3.3],
+          backgroundColor: [
+            'rgba(137,201,249,0.8)',
+            'rgba(120,180,240,0.8)',
+            'rgba(100,160,220,0.8)',
+            'rgba(80,140,200,0.8)'
+          ],
+          borderColor: '#0b1e3d',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          r: {
+            ticks: {color:'#bcd9ff',font:{size:10}},
+            grid: {color:'rgba(137,201,249,0.2)'},
+            angleLines: {color:'rgba(137,201,249,0.2)'},
+            pointLabels: {color:'#89c9f9',font:{size:11}}
+          }
+        },
+        plugins: {
+          legend: {labels:{color:'#89c9f9', font:{size:12}}},
+          tooltip: {backgroundColor:'#274a83', titleColor:'#89c9f9', bodyColor:'#d9e6f8'}
+        }
+      }
+    });
+
+    // Unemployment Rate Bar Chart
+    const ctxUnemp = document.getElementById('unemploymentChart').getContext('2d');
+    new Chart(ctxUnemp, {
+      type: 'bar',
+      data: {
+        labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets:[{
+          label:'Unemployment Rate (%)',
+          data:[5.2,5.0,5.1,5.3,5.4,5.2,5.1,5.0,4.9,4.8,4.7,4.6],
+          backgroundColor:'rgba(137,201,249,0.7)',
+          borderColor:'#89c9f9',
+          borderWidth:1,
+          hoverBackgroundColor:'#89c9f9'
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          y: {beginAtZero:true, max:7, ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'}},
+          x: {ticks:{color:'#bcd9ff', font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'}}
+        },
+        plugins: {
+          legend: {labels:{color:'#89c9f9', font:{size:12}}},
+          tooltip: {backgroundColor:'#274a83',titleColor:'#89c9f9',bodyColor:'#d9e6f8'}
+        }
+      }
+    });
+
+    // LSTM Model Prediction Accuracy Line Chart
+    const ctxLSTM = document.getElementById('lstmPredictionChart').getContext('2d');
+    const gradLSTM = ctxLSTM.createLinearGradient(0,0,0,200);
+    gradLSTM.addColorStop(0, 'rgba(137,201,249,0.6)');
+    gradLSTM.addColorStop(1, 'rgba(137,201,249,0)');
+    new Chart(ctxLSTM, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [{
+          label: 'Actual Price',
+          data: [130, 135, 140, 138, 144, 150, 155],
+          borderColor: '#8bd3f9',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3,
+          tension: 0.2
+        },{
+          label: 'Predicted Price',
+          data: [128, 134, 139, 137, 143, 149, 154],
+          borderColor: '#f9a85a',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3,
+          tension: 0.2
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          y: {beginAtZero:false, ticks:{color:'#bcd9ff',font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'}},
+          x: {ticks:{color:'#bcd9ff',font:{size:10}}, grid:{color:'rgba(137,201,249,0.2)'}}
+        },
+        plugins: {
+          legend: {labels:{color:'#89c9f9',font:{size:12}}},
+          tooltip: {backgroundColor:'#274a83',titleColor:'#89c9f9',bodyColor:'#d9e6f8'}
+        },
+        interaction: {mode:'nearest', intersect:false}
+      }
+    });
+
+    // Market Sentiment Area Chart
+    const ctxSentiment = document.getElementById('sentimentChart').getContext('2d');
+    const gradientSentiment = ctxSentiment.createLinearGradient(0,0,0,200);
+    gradientSentiment.addColorStop(0, 'rgba(249,168,90,0.6)');
+    gradientSentiment.addColorStop(1, 'rgba(249,168,90,0)');
+    new Chart(ctxSentiment, {
+      type: 'line',
+      data: {
+        labels: ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6'],
+        datasets: [{
+          label: 'Sentiment Score',
+          data: [0.3, 0.6, 0.2, 0.5, 0.7, 0.6],
+          fill: true,
+          backgroundColor: gradientSentiment,
+          borderColor: '#f9a85a',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.3,
+          hoverRadius: 6
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales: {
+          y: {beginAtZero:true, max:1, ticks:{color:'#bcd9ff',font:{size:10}}, grid:{color:'rgba(249,168,90,0.2)'}},
+          x: {ticks:{color:'#bcd9ff',font:{size:10}}, grid:{color:'rgba(249,168,90,0.2)'}}
+        },
+        plugins: {
+          legend: {labels:{color:'#f9a85a',font:{size:12}}},
+          tooltip: {backgroundColor:'#553a05',titleColor:'#f9a85a',bodyColor:'#ffe7c7'}
+        }
+      }
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderCharts();
+  });
+</script>
+</body>
+</html>
+</content>
+</create_file>
